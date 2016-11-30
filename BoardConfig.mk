@@ -1,23 +1,11 @@
-#
-# Copyright 2015 The Android Open Source Project
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# Powered by gesangtome Date：December 9, CST 2015.
+# inherit from the proprietary version
+-include vendor/lenovo/tb3730f/BoardConfigVendor.mk
 
-# 配置本地路径
-LOCAL_PATH := device/zte/b880
--include vendor/zte/b880/BoardConfigVendor.mk
+# TODO Delete all lines marked 
+#D## 配置本地路径
+#D#-include vendor/zte/b880/BoardConfigVendor.mk
 
+LOCAL_PATH := device/lenovo/tb3730f
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
 
 USE_CAMERA_STUB := true
@@ -65,10 +53,15 @@ BOARD_USES_MTK_AUDIO := true
 # 内核参数
 TARGET_USES_64_BIT_BINDER := true
 TARGET_IS_64_BIT := true
+#TODO CHECK #BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2
 BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x40078000
 BOARD_KERNEL_PAGESIZE := 2048
-BOARD_MKBOOTIMG_ARGS := --base 0x40078000 --pagesize 2048 --kernel_offset 0x00008000 --ramdisk_offset 0x03f88000 --tags_offset 0x0df88000 --board P635N30V2.0.1B0
+BOARD_RAMDISK_OFFSET := 0x3F88000
+BOARD_SECOND_OFFSET := 0xE88000
+BOARD_KERNEL_TAGS_OFFSET := 0xdf88000
+BOARD_MKBOOTIMG_ARGS := --base $(BOARD_KERNEL_BASE) --pagesize $(BOARD_KERNEL_PAGESIZE) --ramdisk_offset $(BOARD_RAMDISK_OFFSET) --second_offset $(BOARD_SECOND_OFFSET) --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+#D#BOARD_MKBOOTIMG_ARGS := --base 0x40078000 --pagesize 2048 --kernel_offset 0x00008000 --ramdisk_offset 0x03f88000 --tags_offset 0x0df88000 --board P635N30V2.0.1B0
 TARGET_PREBUILT_KERNEL := $(LOCAL_PATH)/kernel
 BOARD_CUSTOM_BOOTIMG := true
 
@@ -148,15 +141,20 @@ WIFI_DRIVER_FW_PATH_AP:=AP
 WIFI_DRIVER_FW_PATH_P2P:=P2P
 
 # make_ext4fs requires numbers in dec format
-TARGET_USERIMAGES_USE_EXT4:=true
-BOARD_BOOTIMAGE_PARTITION_SIZE := 20971520
-BOARD_RECOVERYIMAGE_PARTITION_SIZE := 20971520
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1610612736
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 13474725888
+# 16384 blocks = 0x100 0000 bytes, 16777216 bytes
+BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
+# 16384 blocks = 0x100 0000 bytes, 16777216 bytes
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
+# 2097152 blocks = 0x8000 0000 bytes, 2147483648 bytes
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2147483648
+# 12563968 blocks = 0x2FED80000 bytes, 12865503232 btes
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 12865503232
 BOARD_FLASH_BLOCK_SIZE := 131072
-
 BOARD_HAS_LARGE_FILESYSTEM := true
-TARGET_USERIMAGES_USE_EXT4 := true
+#D#BOARD_BOOTIMAGE_PARTITION_SIZE := 20971520
+#D#BOARD_RECOVERYIMAGE_PARTITION_SIZE := 20971520
+#D#BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1610612736
+#D#BOARD_USERDATAIMAGE_PARTITION_SIZE := 13474725888
 
 # 挂载文件路径
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/class/android_usb/android0/f_mass_storage/lun/file
@@ -167,7 +165,6 @@ BOARD_SUPPRESS_EMMC_WIPE := true
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_15x24.h\"
 TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/root/fstab.mt6735
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBA_8888"
-TARGET_USERIMAGES_USE_EXT4 := true
 
 # 预编译Libchromium.so模块
 #PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
@@ -337,3 +334,16 @@ BOARD_SEPOLICY_UNION += \
 	md_ctrl.te \
 	cmddumper.te \
 	tunman.te
+
+# TWRP
+# Guide: http://forum.xda-developers.com/showthread.php?t=1943625
+# TWRP: https://github.com/omnirom/android_bootable_recovery
+# Busybox external: https://github.com/omnirom/android_external_busybox
+#RECOVERY_VARIANT := twrp
+TW_THEME := portrait_mdpi
+# Enables touch event logging to help debug touchscreen issues. Remove this for release
+TWRP_EVENT_LOGGING := false
+TW_INCLUDE_CRYPTO := true
+#TARGET_HW_DISK_ENCRYPTION := true
+
+#EOF

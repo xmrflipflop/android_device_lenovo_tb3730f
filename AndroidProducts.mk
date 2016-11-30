@@ -13,4 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/full_b880.mk
+    $(LOCAL_DIR)/device_tb3730f.mk
