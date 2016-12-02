@@ -15,8 +15,8 @@ else
 endif
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_KERNEL):kernel \
-    device/lenovo/tb3730f/fstab.mt6735:recovery/root/fstab.mt6735
+    $(LOCAL_KERNEL):kernel
+#    device/lenovo/tb3730f/fstab.mt6735:recovery/root/fstab.mt6735
 
 PRODUCT_COPY_FILES += \
     device/lenovo/tb3730f/twrp.fstab:recovery/root/etc/twrp.fstab
